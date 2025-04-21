@@ -11,7 +11,6 @@ function Quiz() {
 
   const navigate = useNavigate();
 
-  // Fetch questions when component mounts
   useEffect(() => {
     getQuestions(5).then((data) => {
       setQuestions(data);
@@ -39,30 +38,47 @@ function Quiz() {
     }
   };
 
+  const decodeHtml = (html) => {
+    const txt = document.createElement("textarea");
+    txt.innerHTML = html;
+    return txt.value;
+  };
+
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen text-white">Loading questions...</div>
+      <div className="flex items-center justify-center h-screen text-white text-xl font-medium">
+        Loading questions...
+      </div>
     );
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white p-4">
-      <h2 className="text-2xl mb-6">Question {currentQuestion + 1}</h2>
-      <div className="max-w-2xl bg-gray-800 p-6 rounded-lg shadow-lg w-full">
-        <p className="text-lg mb-6">{decodeURIComponent(questions[currentQuestion].question)}</p>
-        <div className="grid grid-cols-1 gap-4">
+    <div className="flex flex-col min-h-screen bg-gray-900 text-white p-6">
+      {/* Question Section */}
+      <div className="flex flex-col items-center justify-center flex-grow">
+        <h2 className="text-sm uppercase tracking-wider text-gray-400 mb-2">
+          Question {currentQuestion + 1} of {questions.length}
+        </h2>
+        <h1 className="text-3xl md:text-5xl font-bold text-center w-[70%] leading-snug mb-10">
+          {decodeHtml(questions[currentQuestion].question)}
+        </h1>
+
+        {/* Options Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl">
           {options.map((option, idx) => (
             <button
               key={idx}
               onClick={() => handleAnswerClick(option)}
-              className="px-4 py-3 bg-blue-600 rounded-lg hover:bg-blue-700 transition"
+              className="cursor-pointer py-8 px-6 rounded-2xl text-xl font-semibold bg-gradient-to-r from-pink-500 to-purple-600 hover:opacity-90 transition-all duration-300"
             >
-              {decodeURIComponent(option)}
+              {decodeHtml(option)}
             </button>
           ))}
         </div>
+
+        {/* Score */}
+        <p className="mt-10 text-gray-400 text-sm">Current Score: {score}</p>
       </div>
-      <p className="mt-6 text-gray-400">Score: {score}</p>
     </div>
   );
 }
